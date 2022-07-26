@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+#每個分組8個字元，一個金鑰4個字元
+
+def strEncrypt(s1,s2,key):#每次傳輸8個字元,分成兩組按位異或,金鑰4個字元
+    result=''
+    for i in range(0,4):
+        temp=ord(s1[i])^ord(s2[i])^ord(key[i])
+        result+=chr(temp)
+    return result
+
+def encode(plainText,keylist):
+    cipherText=''
+    for i in range(0,len(plainText)//8):
+        temp=plainText[i*8:(i+1)*8]#每8個字元劃分成一組加密
+        L=temp[:4]
+        R=temp[4:]
+        for currentKey in keylist:
+            temp2=R
+            R=strEncrypt(L,R,currentKey)
+            L=temp2
+        cipherText+=R+L
+    return cipherText
+
+def main():
+    key=[]
+    a=input('請輸入要加密的字串，目前演算法能處理的明文字元為8的整數倍')
+    keynum=input('請輸入加密迴圈次數')
+    b = len(a)             # 計算a的長度
+    c = b % 8              # c = b / 8 的餘數
+    if c != 0:
+        a = a.ljust(8 - c + b) #將a補成8的倍數
+    for i in range(0,int(keynum)):
+        temp=input('請輸入第'+str(i)+'組加密時使用的金鑰（請輸入班級or學號）')
+        key.append(temp)
+    print('要加密的明文為：',a)
+    a=encode(a,key)
+    print('密文：',a)
+
+    #####解密
+    key.reverse()
+    a=encode(a,key)
+    print('解密後的明文：',a)
+
+
+if __name__ == '__main__':
+    main()
